@@ -1,0 +1,36 @@
+{
+  "name": "WhatsApp Agent",
+  "brand": {
+    "assistantName": "Alex",
+    "companyName": "Your Company",
+    "tone": "friendly and helpful"
+  },
+  "locale": {
+    "defaultLanguage": "en",
+    "supportedLanguages": ["en", "cs"],
+    "timezone": "Europe/Prague",
+    "currency": "CZK"
+  },
+  "features": {
+    "typingIndicator": true,
+    "conversationReset": true
+  },
+  "capabilities": ["core", "knowledge"],
+  "model": "openrouter/openai/gpt-4.1-mini",
+  "knowledge": {
+    "entries": [
+      {
+        "topic": "hours",
+        "content": "We are open Monday–Friday 9:00–18:00, Saturday 10:00–14:00. Closed Sundays."
+      },
+      {
+        "topic": "contact",
+        "content": "Email us at hello@example.com or visit https://example.com."
+      },
+      {
+        "topic": "services",
+        "content": "We provide customer support through WhatsApp."
+      }
+    ]
+  }
+}
