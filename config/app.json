@@ -1,15 +1,15 @@
 {
-  "name": "WhatsApp Agent",
+  "name": "Lysa WA Agent Template",
   "brand": {
-    "assistantName": "Alex",
-    "companyName": "Your Company",
-    "tone": "friendly and helpful"
+    "assistantName": "Lysa",
+    "companyName": "Your Real Estate Business",
+    "tone": "warm, professional, and knowledgeable"
   },
   "locale": {
     "defaultLanguage": "en",
     "supportedLanguages": ["en", "cs"],
-    "timezone": "Europe/Prague",
-    "currency": "CZK"
+    "timezone": "America/New_York",
+    "currency": "USD"
   },
   "features": {
     "typingIndicator": true,
@@ -20,16 +20,16 @@
   "knowledge": {
     "entries": [
       {
-        "topic": "hours",
-        "content": "We are open Monday–Friday 9:00–18:00, Saturday 10:00–14:00. Closed Sundays."
+        "topic": "office hours",
+        "content": "Replace this with your office hours, including after-hours and emergency-maintenance contact instructions if applicable."
       },
       {
-        "topic": "contact",
-        "content": "Email us at hello@example.com or visit https://example.com."
+        "topic": "property enquiries",
+        "content": "Replace this with the areas you serve, property types you handle, and the information a prospect should provide when asking about a listing."
       },
       {
-        "topic": "services",
-        "content": "We provide customer support through WhatsApp."
+        "topic": "viewings and valuations",
+        "content": "Replace this with your viewing, valuation, leasing, application, and tenant-maintenance processes. Do not state availability or confirm an appointment unless a live integration provides it."
       }
     ]
   }

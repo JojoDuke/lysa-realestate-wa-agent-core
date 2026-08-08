@@ -1,26 +1,26 @@
-# Creating a customer fork
+# Creating a real-estate customer fork
 
 ## 1. Create a repository from the template
 
-Use GitHub's **Use this template** action or fork/copy the repository. All following changes happen in the new customer repository.
+Use GitHub's **Use this template** action or fork/copy the Lysa WA Agent Template. All following changes happen in the new customer repository.
 
 ## 2. Configure the agent
 
 Edit `config/app.json`:
 
-- company and assistant names
-- tone
+- agency, brokerage, or property-management company name
+- assistant name and tone
 - languages, timezone, and currency
 - model
 - enabled capabilities
-- initial FAQ knowledge
+- initial knowledge: service areas, property types, office hours, fees, viewing process, valuation process, and maintenance procedure
 
 Edit `config/system.md`:
 
 - responsibilities
-- conversation flow
-- rules and boundaries
-- escalation behavior
+- enquiry-qualification flow for buyers, sellers, renters, landlords, tenants, and owners
+- rules and boundaries, including no legal, financial, investment, or fair-housing advice
+- escalation behavior for viewings, valuations, applications, availability, maintenance, and urgent hazards
 
 ## 3. Configure infrastructure
 
@@ -47,11 +47,21 @@ Examples:
 ["core", "knowledge", "booking"]
 ```
 
-Implement customer-specific external systems behind capability modules rather than in the WhatsApp handler.
+Implement customer-specific external systems behind capability modules rather than in the WhatsApp handler. Common real-estate modules include:
+
+- property search backed by the customer's MLS, listings feed, or property-management system
+- viewing scheduling backed by the customer's calendar or booking provider
+- lead capture and CRM handoff
+- tenant maintenance or repair-request handoff
+
+Only enable a capability after it has been implemented and registered. The starter does not include live listing, availability, viewing, or CRM integrations.
 
 ## 5. Test
 
-- business questions
+- business, property, and process questions
+- qualification of buyer, seller, renter, landlord, tenant, and owner enquiries
+- refusal to invent availability, prices, property details, or appointment confirmations
+- human handoff and emergency-maintenance directions
 - `!clear`
 - message queue behavior
 - durable memory after restart
@@ -59,7 +69,7 @@ Implement customer-specific external systems behind capability modules rather th
 
 ## 6. Deploy
 
-Deploy the fork as an independent service and point that customer's Twilio webhook to it.
+Deploy the fork as an independent service and point that customer's Twilio webhook to it. Each customer needs their own deployment, WhatsApp sender, Supabase project, and provider credentials.
 
 ## 7. Hand off billing
 

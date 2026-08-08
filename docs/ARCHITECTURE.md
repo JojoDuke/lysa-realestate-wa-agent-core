@@ -1,13 +1,13 @@
 # Architecture
 
-This repository is a single-customer application template, not a multi-tenant platform.
+This repository is a single-customer real-estate application template for agencies, brokerages, and property-management businesses, not a multi-tenant platform.
 
 ## Lifecycle
 
 ```text
 Template repository (stable)
   → create repository / fork
-  → customize that fork for one customer
+  → customize that fork for one real-estate customer
   → deploy that customer agent independently
 ```
 
@@ -25,15 +25,15 @@ WhatsApp
 
 ## Boundaries
 
-- `config/`: the customer-specific identity and agent instructions
+- `config/`: the customer-specific real-estate identity, knowledge, and agent instructions
 - `channels/`: transport only; currently Twilio WhatsApp
 - `agents/`: generic Mastra construction and reliable execution
-- `capabilities/`: optional business functionality such as knowledge, booking, CRM, or support
+- `capabilities/`: optional functionality such as property search, viewing scheduling, CRM handoff, lead capture, or tenant support
 - `core/`: shared infrastructure that should rarely need customer-specific edits
 
 ## Isolation
 
-Every customer fork should normally have its own:
+Every real-estate customer fork should normally have its own:
 
 - deployment
 - Twilio account or subaccount and WhatsApp sender

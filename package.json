@@ -1,7 +1,7 @@
 {
-  "name": "wa-agent-starter",
+  "name": "lysa-wa-agent-template",
   "version": "0.1.0",
-  "description": "Plug-and-play WhatsApp AI agent template — Twilio, Express, Mastra, Supabase",
+  "description": "WhatsApp AI agent template for real-estate agencies, brokerages, and property managers",
   "type": "module",
   "engines": {
     "node": ">=22.13.0"
@@ -12,7 +12,7 @@
     "mastra:dev": "mastra dev",
     "typecheck": "tsc --noEmit"
   },
-  "keywords": ["whatsapp", "twilio", "mastra", "ai-agent", "template"],
+  "keywords": ["whatsapp", "twilio", "mastra", "ai-agent", "real-estate", "property-management", "template"],
   "license": "ISC",
   "dependencies": {
     "@libsql/client": "^0.15.15",
