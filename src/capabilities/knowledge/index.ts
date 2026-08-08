@@ -15,9 +15,9 @@ Use searchKnowledge to answer questions about the business. Do not invent facts 
     return {
       searchKnowledge: createTool({
         id: 'search-knowledge',
-        description: 'Search the business knowledge base for FAQs, policies, hours, and service info',
+        description: 'Search the real-estate knowledge base for property, service, process, policy, and office information',
         inputSchema: z.object({
-          query: z.string().describe('What to look up, e.g. "opening hours" or "contact email"'),
+          query: z.string().describe('What to look up, e.g. "office hours", "viewing process", or "service area"'),
         }),
         execute: async (inputData) => {
           const q = inputData.query.toLowerCase();

@@ -1,8 +1,8 @@
-# WhatsApp Agent Starter
+# Lysa WA Agent Template
 
-A stable template repository for creating standalone customer-specific WhatsApp agents.
+A stable template repository for creating standalone, real-estate WhatsApp agents. It is designed for agencies, brokerages, and property-management businesses.
 
-**Workflow:** create a new repository from this template, customize that new repository, and leave this template unchanged.
+**Workflow:** create a new repository from this template for each real-estate customer, customize that repository, and leave this template unchanged.
 
 ## Included
 
@@ -13,8 +13,8 @@ A stable template repository for creating standalone customer-specific WhatsApp 
 - Typing indicator
 - Per-user message queue
 - WhatsApp-safe formatting and split messages
-- Configurable knowledge capability
-- Slots for booking, CRM, lead capture, support, and other capabilities
+- Configurable property, service, and process knowledge
+- Slots for property search, viewing scheduling, CRM, lead capture, tenant support, and other capabilities
 
 ## Quick start
 
@@ -29,17 +29,17 @@ Fill in `.env` (including `OPENROUTER_API_KEY`), run `supabase/migrations/001_in
 - Incoming webhook: `https://your-host/whatsapp`
 - Status callback: `https://your-host/whatsapp/status`
 
-## Customize a fork
+## Customize a customer fork
 
 Normal customer customization happens in:
 
-- `config/app.json` — brand, locale, model, enabled capabilities, simple knowledge
-- `config/system.md` — agent role, tone, rules, and workflow
-- `src/capabilities/` — integrations and specialized behavior
+- `config/app.json` — business identity, locale, model, enabled capabilities, and property/process knowledge
+- `config/system.md` — real-estate role, tone, qualification flow, rules, and escalation behavior
+- `src/capabilities/` — property-data, viewing, CRM, lead-capture, and tenant-support integrations
 - `.env` — OpenRouter, Twilio, Supabase, and provider credentials
 - `config/app.json` → `model` — any OpenRouter model id (e.g. `openrouter/openai/gpt-4.1-mini`)
 
-There is no tenant system. One fork represents one customer and one standalone agent.
+There is no tenant system. One fork represents one real-estate customer and one standalone agent. See [Creating a real-estate customer fork](docs/CUSTOMIZING.md) for the complete checklist.
 
 ## Structure
 
