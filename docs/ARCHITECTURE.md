@@ -14,14 +14,16 @@ Template repository (stable)
 ## Runtime
 
 ```text
-WhatsApp
-  → Twilio POST /whatsapp
-  → Express handler
-  → Mastra agent
-  → enabled capability tools
-  → Supabase and external APIs
-  → Twilio response
+WhatsApp or Mastra Studio
+  → supervisor agent (whatsappAgent / Lysa)
+  → specialist subagents (lead, knowledge, property, showing, memory)
+  → capability tools (config demos or customer integrations)
+  → optional Supabase / calendar / MLS
+  → reply
 ```
+
+Studio (`pnpm mastra:dev`) uses local LibSQL memory and does not require Supabase or Twilio.
+WhatsApp (`pnpm dev`) is the production channel; add Supabase for durable users + Postgres memory.
 
 ## Boundaries
 

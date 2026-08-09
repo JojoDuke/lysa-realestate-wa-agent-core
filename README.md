@@ -1,74 +1,82 @@
 # Lysa WA Agent Template
 
-A stable template repository for creating standalone, real-estate WhatsApp agents. It is designed for agencies, brokerages, and property-management businesses.
+A stable template for standalone real-estate WhatsApp agents (agencies, brokerages, property managers).
 
-**Workflow:** create a new repository from this template for each real-estate customer, customize that repository, and leave this template unchanged.
+**Workflow:** create a new repository from this template for each customer, customize that fork, leave this template unchanged.
 
-## Included
+## Lysa’s five specialists
 
-- Twilio WhatsApp webhook and outbound delivery
-- Express server
-- Mastra agent and persistent conversation memory
-- Supabase user storage
-- Typing indicator
-- Per-user message queue
-- WhatsApp-safe formatting and split messages
-- Configurable property, service, and process knowledge
-- Slots for property search, viewing scheduling, CRM, lead capture, tenant support, and other capabilities
+Mastra Studio is the fastest way to develop. The template ships a **supervisor** (`whatsappAgent` / Lysa) plus five subagents:
 
-## Quick start
+| Agent | Role |
+|---|---|
+| `leadQualificationAgent` | Qualify enquiries, capture contact, Hot/Warm/Cold |
+| `knowledgeAgent` | FAQs, process, fees, office info |
+| `propertyDiscoveryAgent` | Search configured listings |
+| `showingBookingAgent` | Check slots and book showings |
+| `conversationMemoryAgent` | Recall / save customer preferences |
+
+Demo listings and showing slots live in `config/app.json`. Swap those feeds for live MLS/calendar/CRM integrations per customer.
+
+## Quick start (Mastra Studio — no Supabase required)
 
 ```bash
 cp .env.example .env
+# set OPENROUTER_API_KEY
 pnpm install
+pnpm mastra:dev
+```
+
+Open Studio at `http://localhost:3000`. Chat with Lysa or any specialist. Conversation memory uses local `mastra.db` until you set `SUPABASE_DATABASE_URL`.
+
+## WhatsApp / production
+
+```bash
 pnpm dev
 ```
 
-Fill in `.env` (including `OPENROUTER_API_KEY`), run `supabase/migrations/001_initial.sql`, expose port 3000, and configure Twilio:
+Then configure Twilio:
 
 - Incoming webhook: `https://your-host/whatsapp`
 - Status callback: `https://your-host/whatsapp/status`
 
+Add Supabase (`SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_DATABASE_URL`) and run `supabase/migrations/001_initial.sql` when you need durable users + memory.
+
 ## Customize a customer fork
 
-Normal customer customization happens in:
+- `config/app.json` — brand, locale, model, capabilities, knowledge, listings, showing slots
+- `config/system.md` — supervisor tone and rules
+- `src/capabilities/` — replace demo tools with customer integrations
+- `src/agents/specialists.ts` — specialist instructions
+- `.env` — OpenRouter, Twilio, Supabase
 
-- `config/app.json` — business identity, locale, model, enabled capabilities, and property/process knowledge
-- `config/system.md` — real-estate role, tone, qualification flow, rules, and escalation behavior
-- `src/capabilities/` — property-data, viewing, CRM, lead-capture, and tenant-support integrations
-- `.env` — OpenRouter, Twilio, Supabase, and provider credentials
-- `config/app.json` → `model` — any OpenRouter model id (e.g. `openrouter/openai/gpt-4.1-mini`)
-
-There is no tenant system. One fork represents one real-estate customer and one standalone agent. See [Creating a real-estate customer fork](docs/CUSTOMIZING.md) for the complete checklist.
+See [Creating a real-estate customer fork](docs/CUSTOMIZING.md).
 
 ## Structure
 
 ```text
 config/
-  app.json                 Customer and feature configuration
-  system.md                Agent instructions
+  app.json                 Customer config + demo listings/slots
+  system.md                Supervisor instructions
 src/
-  agents/                  Agent factory and runner
-  capabilities/            Optional tools and integrations
+  agents/                  Supervisor, specialists, runner
+  capabilities/            Tools per specialist domain
   channels/whatsapp/       Twilio transport
-  core/                    Database, config, memory, utilities
-  mastra/                  Mastra bootstrap
-supabase/migrations/       Reproducible database schema
+  core/                    Config, optional Supabase, storage
+  mastra/                  Mastra bootstrap (Studio entry)
+supabase/migrations/       Schema for production users
 ```
 
 ## Memory
 
-The starter separates:
-
-1. Conversation memory — Mastra thread history keyed by the WhatsApp number
-2. Customer data — Supabase `users`
-3. Business knowledge — configuration now; Supabase/vector search can replace it later
-
-Set `SUPABASE_DATABASE_URL` in production. Without it, Mastra uses local `mastra.db`, which is not durable across redeploys.
+1. Conversation memory — Mastra threads (local `mastra.db` or Postgres via `SUPABASE_DATABASE_URL`)
+2. Customer rows — Supabase `users` (optional; skipped when unset)
+3. Preferences — in-memory store used by Conversation Memory (swap for Supabase later)
+4. Business knowledge / listings — `config/app.json` until live feeds are wired
 
 ## LLM billing (OpenRouter)
 
-Use **your** OpenRouter key while building a customer fork. At go-live, swap in **the customer's** key in production — they pay for usage from then on. See [OpenRouter setup & handoff](docs/OPENROUTER.md).
+Use **your** OpenRouter key while building. At go-live, swap in the **customer’s** key. See [OpenRouter setup & handoff](docs/OPENROUTER.md).
 
 ## Docs
 

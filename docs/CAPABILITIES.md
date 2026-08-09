@@ -1,47 +1,33 @@
-# Real-estate capabilities
+# Real-estate capabilities (Lysa specialists)
 
-Capabilities are optional modules assembled into a standalone real-estate agent from `config/app.json`.
+Capabilities are tool modules bound to Lysa’s five specialist subagents. The WhatsApp supervisor delegates to them via Mastra’s `agents` map.
 
-## Included
+## Specialists
 
-- `core`: basic configured agency, brokerage, or property-management information
-- `knowledge`: searches configured property, service, and process knowledge from `config/app.json`
+| Capability id | Subagent | Tools (template) |
+|---|---|---|
+| `lead_qualification` | `leadQualificationAgent` | `captureLead` |
+| `knowledge` | `knowledgeAgent` | `searchKnowledge`, `getBusinessInfo` |
+| `property_discovery` | `propertyDiscoveryAgent` | `searchListings` |
+| `showing_booking` | `showingBookingAgent` | `checkShowingAvailability`, `requestShowing` |
+| `conversation_memory` | `conversationMemoryAgent` | `recallPreferences`, `savePreferences` |
 
-## Common extensions
+`core` is always available for business identity lookups.
 
-Add only the modules a customer can support operationally:
+## Demo vs customer
 
-- **Property search:** query the customer's MLS, listing feed, or property-management system. Return only current records and clearly identify when data is unavailable.
-- **Viewing scheduling:** check availability and request or create property-viewing appointments.
-- **Lead capture / CRM:** create or update a lead after collecting consent and the minimum useful contact and enquiry details.
-- **Tenant support:** route maintenance requests and provide the customer's emergency-maintenance procedure.
+This template ships **offline-friendly demos**:
 
-These modules are not bundled as live integrations because each customer uses different listing, scheduling, CRM, and property-management systems.
+- Listings / slots from `config/app.json`
+- Preferences in an in-memory map
+- Lead capture that also updates Supabase `users` when credentials exist
+
+For a real customer, replace the capability `execute` bodies with MLS, calendar, CRM, or PMS adapters. Keep tool ids stable so specialist prompts stay valid.
 
 ## Add a capability
 
-Create `src/capabilities/example/index.ts`:
-
-```ts
-export const exampleCapability: CapabilityModule = {
-  id: 'example',
-  promptExtension: 'Instructions used only when this capability is enabled.',
-  getTools: (config) => ({
-    exampleTool: createTool({ /* ... */ }),
-  }),
-};
-```
-
-Register it in `src/capabilities/registry.ts`, add its ID to `CapabilityId`, and enable it in `config/app.json`.
-
-## Viewing scheduling
-
-Viewing scheduling is deliberately not part of the core because it requires a customer-specific calendar, booking provider, or CRM integration.
-
-When required, expose neutral tools:
-
-- `checkViewingAvailability`
-- `requestViewing`
-- `cancelViewing`
-
-Implement a provider adapter behind those tools for the customer's calendar, CRM, property-management system, or another provider. Provider-specific details should not leak into the base agent runner or WhatsApp channel.
+1. Create `src/capabilities/example/index.ts` exporting a `CapabilityModule`
+2. Register it in `src/capabilities/registry.ts`
+3. Add a specialist (or extend an existing one) in `src/agents/specialists.ts`
+4. Enable the id in `config/app.json` → `capabilities`
+5. Re-test in `pnpm mastra:dev`
