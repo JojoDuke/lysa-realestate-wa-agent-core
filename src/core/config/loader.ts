@@ -6,8 +6,20 @@ function interpolate(template: string, vars: Record<string, string>): string {
   return template.replace(/\{\{(\w+)\}\}/g, (_, key) => vars[key] ?? '');
 }
 
+/** Resolve repo root even when Mastra playground changes cwd. */
+function findProjectRoot(): string {
+  let dir = process.cwd();
+  for (;;) {
+    if (fs.existsSync(path.join(dir, 'config', 'app.json'))) return dir;
+    const parent = path.dirname(dir);
+    if (parent === dir) break;
+    dir = parent;
+  }
+  return process.cwd();
+}
+
 export function loadAppConfig(): AppConfig {
-  const configPath = path.join(process.cwd(), 'config', 'app.json');
+  const configPath = path.join(findProjectRoot(), 'config', 'app.json');
   if (!fs.existsSync(configPath)) {
     throw new Error(`App config not found: ${configPath}`);
   }
@@ -15,7 +27,7 @@ export function loadAppConfig(): AppConfig {
 }
 
 export function loadSystemPrompt(config: AppConfig): string {
-  const promptPath = path.join(process.cwd(), 'config', 'system.md');
+  const promptPath = path.join(findProjectRoot(), 'config', 'system.md');
   if (!fs.existsSync(promptPath)) {
     throw new Error(`System prompt not found: ${promptPath}`);
   }

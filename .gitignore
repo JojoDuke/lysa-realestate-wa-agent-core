@@ -3,5 +3,8 @@ dist/
 .env
 .mastra/
 mastra.db
+mastra.db-*
 *.db
+*.db-*
+src/mastra/public/
 .DS_Store
