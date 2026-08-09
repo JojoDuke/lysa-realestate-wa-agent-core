@@ -7,8 +7,10 @@ dotenv.config();
 const supabaseUrl = env('SUPABASE_URL');
 const supabaseAnonKey = env('SUPABASE_ANON_KEY');
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn('⚠️  Supabase credentials not set — user persistence disabled.');
-}
+/** Null when unset — Studio / local demos work without Supabase. */
+export const supabase: SupabaseClient | null =
+  supabaseUrl && supabaseAnonKey ? createClient(supabaseUrl, supabaseAnonKey) : null;
 
-export const supabase: SupabaseClient = createClient(supabaseUrl, supabaseAnonKey);
+if (!supabase) {
+  console.warn('⚠️  Supabase credentials not set — user persistence disabled (Studio/local OK).');
+}

@@ -15,22 +15,93 @@
     "typingIndicator": true,
     "conversationReset": true
   },
-  "capabilities": ["core", "knowledge"],
+  "capabilities": [
+    "core",
+    "knowledge",
+    "lead_qualification",
+    "property_discovery",
+    "showing_booking",
+    "conversation_memory"
+  ],
   "model": "openrouter/openai/gpt-4.1-mini",
   "knowledge": {
     "entries": [
       {
         "topic": "office hours",
-        "content": "Replace this with your office hours, including after-hours and emergency-maintenance contact instructions if applicable."
+        "content": "Office hours are Monday–Friday 9:00–18:00 local time. After hours, leave a WhatsApp message and Lysa will help or escalate."
       },
       {
-        "topic": "property enquiries",
-        "content": "Replace this with the areas you serve, property types you handle, and the information a prospect should provide when asking about a listing."
+        "topic": "buying process",
+        "content": "We start with a short qualification, share matching listings, then book showings. An agent joins for offers and negotiation."
       },
       {
-        "topic": "viewings and valuations",
-        "content": "Replace this with your viewing, valuation, leasing, application, and tenant-maintenance processes. Do not state availability or confirm an appointment unless a live integration provides it."
+        "topic": "fees",
+        "content": "Buyer-side representation is typically covered by the listing side where customary; confirm specifics with a licensed agent before signing."
+      },
+      {
+        "topic": "service area",
+        "content": "We focus on Greater Phoenix including Scottsdale, Tempe, and Mesa. Ask about other areas and we will check coverage."
       }
     ]
-  }
+  },
+  "listings": [
+    {
+      "id": "listing-101",
+      "title": "Sunny 3-bed in Scottsdale",
+      "area": "Scottsdale",
+      "price": 675000,
+      "bedrooms": 3,
+      "bathrooms": 2,
+      "propertyType": "single-family",
+      "description": "Updated kitchen, private backyard, close to Old Town. Ideal for first-time buyers under $700k.",
+      "status": "available"
+    },
+    {
+      "id": "listing-102",
+      "title": "Modern Tempe townhome",
+      "area": "Tempe",
+      "price": 489000,
+      "bedrooms": 2,
+      "bathrooms": 2.5,
+      "propertyType": "townhome",
+      "description": "Gated community, 2-car garage, walkable to shops. Low-maintenance living near ASU.",
+      "status": "available"
+    },
+    {
+      "id": "listing-103",
+      "title": "Family home in Mesa",
+      "area": "Mesa",
+      "price": 549000,
+      "bedrooms": 4,
+      "bathrooms": 3,
+      "propertyType": "single-family",
+      "description": "Four bedrooms, large lot, quiet cul-de-sac. Great for growing families.",
+      "status": "available"
+    }
+  ],
+  "showingSlots": [
+    {
+      "id": "slot-mon-10",
+      "start": "2026-08-11T10:00:00-07:00",
+      "label": "Monday 10:00 AM",
+      "propertyId": "listing-101"
+    },
+    {
+      "id": "slot-mon-14",
+      "start": "2026-08-11T14:00:00-07:00",
+      "label": "Monday 2:00 PM",
+      "propertyId": "listing-101"
+    },
+    {
+      "id": "slot-tue-11",
+      "start": "2026-08-12T11:00:00-07:00",
+      "label": "Tuesday 11:00 AM",
+      "propertyId": "listing-102"
+    },
+    {
+      "id": "slot-wed-16",
+      "start": "2026-08-13T16:00:00-07:00",
+      "label": "Wednesday 4:00 PM"
+    }
+  ]
 }

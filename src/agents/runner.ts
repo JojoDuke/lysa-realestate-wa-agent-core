@@ -3,8 +3,8 @@ import { sharedStorage } from '../core/storage/memory.js';
 import type { SupportedLang } from '../core/lib/language.js';
 import { buildThreadId, buildResourceId } from '../core/config/loader.js';
 
-const TIMEOUT_MS = 60_000;
-const MAX_STEPS = 10;
+const TIMEOUT_MS = 90_000;
+const MAX_STEPS = 16;
 
 export interface RunAgentParams {
   agent: Agent;

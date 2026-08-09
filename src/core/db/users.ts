@@ -8,6 +8,8 @@ export interface UserRow {
 }
 
 export async function ensureUser(whatsappFrom: string): Promise<UserRow | null> {
+  if (!supabase) return null;
+
   const canonical = normalizePhone(whatsappFrom);
   const legacy = whatsappFrom.replace(/^whatsapp:/i, '').trim();
 
@@ -42,6 +44,7 @@ export async function updateUserContact(
   phone: string,
   fields: { name?: string; email?: string },
 ): Promise<void> {
+  if (!supabase) return;
   const canonical = normalizePhone(phone);
   await supabase.from('users').upsert(
     { phone_number: canonical, ...fields },
