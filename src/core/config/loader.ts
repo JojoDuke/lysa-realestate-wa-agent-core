@@ -6,8 +6,25 @@ function interpolate(template: string, vars: Record<string, string>): string {
   return template.replace(/\{\{(\w+)\}\}/g, (_, key) => vars[key] ?? '');
 }
 
+/** Walk up from cwd — `mastra dev` runs with cwd under `src/mastra/public`. */
+function findProjectRoot(start = process.cwd()): string {
+  let dir = start;
+  while (true) {
+    if (fs.existsSync(path.join(dir, 'config', 'app.json'))) {
+      return dir;
+    }
+    const parent = path.dirname(dir);
+    if (parent === dir) {
+      return start;
+    }
+    dir = parent;
+  }
+}
+
+const projectRoot = findProjectRoot();
+
 export function loadAppConfig(): AppConfig {
-  const configPath = path.join(process.cwd(), 'config', 'app.json');
+  const configPath = path.join(projectRoot, 'config', 'app.json');
   if (!fs.existsSync(configPath)) {
     throw new Error(`App config not found: ${configPath}`);
   }
@@ -15,7 +32,7 @@ export function loadAppConfig(): AppConfig {
 }
 
 export function loadSystemPrompt(config: AppConfig): string {
-  const promptPath = path.join(process.cwd(), 'config', 'system.md');
+  const promptPath = path.join(projectRoot, 'config', 'system.md');
   if (!fs.existsSync(promptPath)) {
     throw new Error(`System prompt not found: ${promptPath}`);
   }
