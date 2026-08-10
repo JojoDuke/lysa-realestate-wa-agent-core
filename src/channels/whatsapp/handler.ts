@@ -1,15 +1,16 @@
 import MessagingResponse from 'twilio/lib/twiml/MessagingResponse';
-import { mastra, appContext } from '../../mastra/index.js';
-import { sharedStorage } from '../../core/storage/memory.js';
+import { appContext } from '../../mastra/index.js';
 import { ensureUser } from '../../core/db/users.js';
-import { normalizePhone } from '../../core/lib/phone.js';
 import {
   detectLanguage,
   pickLang,
   emptyNudge,
 } from '../../core/lib/language.js';
-import { buildThreadId } from '../../core/config/loader.js';
-import { runAgent, mapErrorToUserMessage } from '../../agents/runner.js';
+import {
+  clearConversation,
+  mapErrorToUserMessage,
+  runLysa,
+} from '../../mastra/runtime/runner.js';
 import {
   sanitizeWhatsAppMessage,
   parseSplitMessages,
@@ -78,7 +79,6 @@ async function handleMessage(body: Record<string, string>, res?: import('express
   try {
     const normalized = incoming.trim().toLowerCase();
     const userRow = await ensureUser(sender);
-    const canonical = normalizePhone(sender);
     const lang = pickLang(
       detectLanguage(incoming),
       appContext.config.locale.defaultLanguage,
@@ -91,10 +91,7 @@ async function handleMessage(body: Record<string, string>, res?: import('express
       appContext.config.features.conversationReset &&
       (normalized === '!clear' || normalized === '!reset')
     ) {
-      const threadId = buildThreadId(sender);
-      await (sharedStorage as { deleteThread?: (a: { threadId: string }) => Promise<void> })?.deleteThread?.({
-        threadId,
-      });
+      await clearConversation(sender);
       processing.delete(sender);
       await reply(body, res, '✅ Conversation cleared. How can I help you?');
       scheduleQueue(sender);

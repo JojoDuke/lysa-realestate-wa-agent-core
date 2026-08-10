@@ -12,3 +12,25 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 export const supabase: SupabaseClient = createClient(supabaseUrl, supabaseAnonKey);
+
+export function isSupabaseConfigured(): boolean {
+  return Boolean(supabaseUrl && supabaseAnonKey);
+}
+
+/**
+ * Persistence is optional in this template, so a missing or failing database must
+ * degrade into a handoff rather than breaking the conversation.
+ */
+export async function withSupabase<T>(
+  operation: string,
+  run: () => Promise<T>,
+  fallback: T,
+): Promise<T> {
+  if (!isSupabaseConfigured()) return fallback;
+  try {
+    return await run();
+  } catch (error) {
+    console.error(`❌ Supabase ${operation} failed:`, error);
+    return fallback;
+  }
+}

@@ -15,7 +15,13 @@
     "typingIndicator": true,
     "conversationReset": true
   },
-  "capabilities": ["core", "knowledge"],
+  "capabilities": [
+    "knowledge",
+    "lead_qualification",
+    "property_discovery",
+    "viewing_booking",
+    "memory"
+  ],
   "model": "openrouter/openai/gpt-4.1-mini",
   "knowledge": {
     "entries": [
@@ -32,5 +38,19 @@
         "content": "Replace this with your viewing, valuation, leasing, application, and tenant-maintenance processes. Do not state availability or confirm an appointment unless a live integration provides it."
       }
     ]
+  },
+  "properties": {
+    "source": "config",
+    "listings": []
+  },
+  "scheduling": {
+    "mode": "request",
+    "viewingDurationMinutes": 30,
+    "availableWindows": ["Mon-Fri 09:00-18:00", "Sat 10:00-14:00"],
+    "notes": "Requests are confirmed by a human agent before the viewing is final."
+  },
+  "memory": {
+    "longTerm": true,
+    "maxItems": 50
   }
 }
