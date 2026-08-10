@@ -8,13 +8,20 @@ const supabaseUrl = env('SUPABASE_URL');
 const supabaseAnonKey = env('SUPABASE_ANON_KEY');
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn('⚠️  Supabase credentials not set — user persistence disabled.');
+  console.warn('⚠️  Supabase credentials not set — user, lead, memory, and viewing storage disabled.');
 }
 
-export const supabase: SupabaseClient = createClient(supabaseUrl, supabaseAnonKey);
+let client: SupabaseClient | null = null;
 
 export function isSupabaseConfigured(): boolean {
   return Boolean(supabaseUrl && supabaseAnonKey);
+}
+
+/** Created on first use so the app still boots without Supabase credentials. */
+export function getSupabase(): SupabaseClient | null {
+  if (!isSupabaseConfigured()) return null;
+  if (!client) client = createClient(supabaseUrl, supabaseAnonKey);
+  return client;
 }
 
 /**
@@ -23,12 +30,13 @@ export function isSupabaseConfigured(): boolean {
  */
 export async function withSupabase<T>(
   operation: string,
-  run: () => Promise<T>,
+  run: (db: SupabaseClient) => Promise<T>,
   fallback: T,
 ): Promise<T> {
-  if (!isSupabaseConfigured()) return fallback;
+  const db = getSupabase();
+  if (!db) return fallback;
   try {
-    return await run();
+    return await run(db);
   } catch (error) {
     console.error(`❌ Supabase ${operation} failed:`, error);
     return fallback;

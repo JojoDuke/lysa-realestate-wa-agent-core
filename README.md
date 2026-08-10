@@ -4,17 +4,32 @@ A stable template repository for creating standalone, real-estate WhatsApp agent
 
 **Workflow:** create a new repository from this template for each real-estate customer, customize that repository, and leave this template unchanged.
 
+## Lysa
+
+Lysa is the assistant the customer talks to. She works out what they need and delegates to a specialist:
+
+```text
+LYSA (orchestrator)
+├── Lead Qualification   qualify buyers and sellers, capture requirements
+├── Knowledge            answer from the approved knowledge base
+├── Property Discovery   search and match listings
+├── Viewing Booking      record and manage viewing requests
+└── Memory               recall and store customer history
+```
+
+Capabilities are switched on per customer in `config/app.json`. See [Capabilities](docs/CAPABILITIES.md).
+
 ## Included
 
 - Twilio WhatsApp webhook and outbound delivery
 - Express server
-- Mastra agent and persistent conversation memory
-- Supabase user storage
+- Orchestrator agent with five capability specialists, tools, and workflows
+- Persistent conversation memory plus long-term customer memory
+- Supabase storage for users, leads, memories, and viewing requests
 - Typing indicator
 - Per-user message queue
 - WhatsApp-safe formatting and split messages
-- Configurable property, service, and process knowledge
-- Slots for property search, viewing scheduling, CRM, lead capture, tenant support, and other capabilities
+- Provider-neutral property catalogue and scheduling
 
 ## Quick start
 
@@ -24,7 +39,7 @@ pnpm install
 pnpm dev
 ```
 
-Fill in `.env` (including `OPENROUTER_API_KEY`), run `supabase/migrations/001_initial.sql`, expose port 3000, and configure Twilio:
+Fill in `.env` (including `OPENROUTER_API_KEY`), run the migrations in `supabase/migrations/`, expose port 3000, and configure Twilio:
 
 - Incoming webhook: `https://your-host/whatsapp`
 - Status callback: `https://your-host/whatsapp/status`
@@ -33,9 +48,10 @@ Fill in `.env` (including `OPENROUTER_API_KEY`), run `supabase/migrations/001_in
 
 Normal customer customization happens in:
 
-- `config/app.json` — business identity, locale, model, enabled capabilities, and property/process knowledge
-- `config/system.md` — real-estate role, tone, qualification flow, rules, and escalation behavior
-- `src/capabilities/` — property-data, viewing, CRM, lead-capture, and tenant-support integrations
+- `config/app.json` — business identity, locale, model, enabled capabilities, knowledge, listings, and scheduling policy
+- `config/system.md` — Lysa's role, tone, qualification flow, rules, and escalation behavior
+- `src/mastra/tools/` — the concrete actions each capability can take
+- `src/core/properties/provider.ts` — swap the config catalogue for an MLS, portal feed, or PMS
 - `.env` — OpenRouter, Twilio, Supabase, and provider credentials
 - `config/app.json` → `model` — any OpenRouter model id (e.g. `openrouter/openai/gpt-4.1-mini`)
 
@@ -45,14 +61,18 @@ There is no tenant system. One fork represents one real-estate customer and one 
 
 ```text
 config/
-  app.json                 Customer and feature configuration
-  system.md                Agent instructions
+  app.json                 Customer, capability, listing, and scheduling configuration
+  system.md                Lysa's persona and boundaries
 src/
-  agents/                  Agent factory and runner
-  capabilities/            Optional tools and integrations
-  channels/whatsapp/       Twilio transport
-  core/                    Database, config, memory, utilities
-  mastra/                  Mastra bootstrap
+  mastra/
+    agents/                Lysa and the five capability specialists
+    tools/                 Concrete actions, grouped by capability
+    workflows/             Deterministic multi-step processes
+    runtime/               One conversational turn: streaming, retries, timeouts
+    capabilities.ts        Assembles the capabilities enabled in app.json
+    index.ts               Mastra registration
+  channels/whatsapp/       Twilio transport only
+  core/                    Config, database, property provider, utilities
 supabase/migrations/       Reproducible database schema
 ```
 
@@ -61,8 +81,9 @@ supabase/migrations/       Reproducible database schema
 The starter separates:
 
 1. Conversation memory — Mastra thread history keyed by the WhatsApp number
-2. Customer data — Supabase `users`
-3. Business knowledge — configuration now; Supabase/vector search can replace it later
+2. Long-term customer memory — Supabase `customer_memories`, managed by the Memory capability
+3. Customer and lead data — Supabase `users`, `leads`, and `viewing_requests`
+4. Business knowledge — configuration now; Supabase/vector search can replace it later
 
 Set `SUPABASE_DATABASE_URL` in production. Without it, Mastra uses local `mastra.db`, which is not durable across redeploys.
 

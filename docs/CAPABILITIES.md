@@ -1,47 +1,64 @@
-# Real-estate capabilities
+# Lysa's capabilities
 
-Capabilities are optional modules assembled into a standalone real-estate agent from `config/app.json`.
+Lysa has five core capabilities. Each is a specialized agent she delegates to, enabled per customer in `config/app.json`.
 
-## Included
+## Lead Qualification
 
-- `core`: basic configured agency, brokerage, or property-management information
-- `knowledge`: searches configured property, service, and process knowledge from `config/app.json`
+Qualifies buyers, sellers, renters, and landlords: contact details, requirements, budget, financing, and timeline.
 
-## Common extensions
+- Tools: `getLeadProfile`, `saveLeadDetails`, `markLeadQualified`
+- Workflow: `lead-qualification` — merges newly heard details into the stored lead and reports what is still missing
+- Storage: `leads` table
 
-Add only the modules a customer can support operationally:
+The profile is loaded before anything is asked, so the customer is never asked twice.
 
-- **Property search:** query the customer's MLS, listing feed, or property-management system. Return only current records and clearly identify when data is unavailable.
-- **Viewing scheduling:** check availability and request or create property-viewing appointments.
-- **Lead capture / CRM:** create or update a lead after collecting consent and the minimum useful contact and enquiry details.
-- **Tenant support:** route maintenance requests and provide the customer's emergency-maintenance procedure.
+## Knowledge
 
-These modules are not bundled as live integrations because each customer uses different listing, scheduling, CRM, and property-management systems.
+Answers questions about the business using only its approved knowledge base.
 
-## Add a capability
+- Tools: `searchKnowledge`, `getBusinessInfo`
+- Source: `knowledge.entries` in `config/app.json`
 
-Create `src/capabilities/example/index.ts`:
+If nothing matches, it says so and recommends a human handoff instead of guessing.
 
-```ts
-export const exampleCapability: CapabilityModule = {
-  id: 'example',
-  promptExtension: 'Instructions used only when this capability is enabled.',
-  getTools: (config) => ({
-    exampleTool: createTool({ /* ... */ }),
-  }),
-};
+## Property Discovery
+
+Searches the catalogue, matches listings against requirements, and explains individual listings.
+
+- Tools: `searchProperties`, `getPropertyDetails`
+- Workflow: `property-search` — merges stored lead requirements with anything new the customer said, then searches once
+- Source: `properties.listings` in `config/app.json`
+
+The bundled provider reads listings from configuration. Replace `createPropertyProvider` in `src/core/properties/provider.ts` with an MLS, portal-feed, or PMS adapter; the `PropertyProvider` interface is all the agents depend on. With no listings configured, the tools report that the catalogue is unavailable rather than inventing properties.
+
+## Viewing Booking
+
+Handles viewing requests end to end.
+
+- Tools: `checkViewingAvailability`, `requestViewing`, `listViewingRequests`, `cancelViewing`
+- Workflow: `viewing-booking` — validates the property, records the request, and remembers it
+- Storage: `viewing_requests` table
+- Config: `scheduling.mode` (`request` or `disabled`), `availableWindows`, `viewingDurationMinutes`
+
+There is no live calendar. A recorded request always carries a reference and is confirmed by a human. To integrate a real calendar, back `checkViewingAvailability` and `requestViewing` with the customer's provider.
+
+## Memory
+
+Recalls customer history across conversations and stores durable new facts.
+
+- Tools: `recallCustomerMemory`, `saveCustomerMemory`
+- Storage: `customer_memories` table
+
+Payment, credential, and identity-document content is rejected before it can be written. Thread history is separate and always on, handled by Mastra memory.
+
+## Enabling and disabling
+
+```json
+"capabilities": ["knowledge", "lead_qualification", "property_discovery", "viewing_booking", "memory"]
 ```
 
-Register it in `src/capabilities/registry.ts`, add its ID to `CapabilityId`, and enable it in `config/app.json`.
+Removing an id removes the agent, its tools, its workflow, and its line in Lysa's routing table.
 
-## Viewing scheduling
+## Future capabilities
 
-Viewing scheduling is deliberately not part of the core because it requires a customer-specific calendar, booking provider, or CRM integration.
-
-When required, expose neutral tools:
-
-- `checkViewingAvailability`
-- `requestViewing`
-- `cancelViewing`
-
-Implement a provider adapter behind those tools for the customer's calendar, CRM, property-management system, or another provider. Provider-specific details should not leak into the base agent runner or WhatsApp channel.
+The same pattern extends to follow-up, document processing, transaction coordination, lead routing, agent briefing, listing management, valuation, CRM integrations, and additional channels such as voice, email, and SMS. None are implemented yet. See [ARCHITECTURE.md](./ARCHITECTURE.md) for the steps to add one.

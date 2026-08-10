@@ -114,24 +114,11 @@ async function handleMessage(body: Record<string, string>, res?: import('express
     }
 
     try {
-      const agent = mastra.getAgent('whatsappAgent');
-      if (!agent) throw new Error('whatsappAgent not registered');
-
-      const sessionContext = [
-        '[Session context]',
-        `Business: ${appContext.config.brand.companyName}`,
-        `User phone: ${canonical}`,
-        userRow?.name ? `Saved name: ${userRow.name}` : 'No saved name yet.',
-        userRow?.email ? `Saved email: ${userRow.email}` : 'No saved email yet.',
-        `Language hint: ${lang}`,
-      ].join('\n');
-
       console.log(`🔄 Calling ${appContext.config.brand.assistantName}...`);
-      const { fullResponse } = await runAgent({
-        agent,
-        incomingMessage: incoming,
-        senderNumber: sender,
-        sessionContext,
+      const { text: fullResponse } = await runLysa({
+        message: incoming,
+        customer: { phone: sender, name: userRow?.name, email: userRow?.email },
+        language: lang,
       });
 
       console.log(`🤖 [${appContext.config.brand.assistantName}] → ${fullResponse.slice(0, 200)}${fullResponse.length > 200 ? '…' : ''}`);

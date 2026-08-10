@@ -1,4 +1,4 @@
-import { supabase, withSupabase, isSupabaseConfigured } from './supabase.js';
+import { withSupabase, isSupabaseConfigured } from './supabase.js';
 import { updateUserContact } from './users.js';
 import { normalizePhone } from '../lib/phone.js';
 
@@ -41,8 +41,8 @@ export async function getLead(phone: string): Promise<LeadProfile | null> {
   const canonical = normalizePhone(phone);
   return withSupabase(
     'getLead',
-    async () => {
-      const { data, error } = await supabase
+    async (db) => {
+      const { data, error } = await db
         .from('leads')
         .select(SELECT_COLUMNS)
         .eq('phone_number', canonical)
@@ -71,8 +71,8 @@ export async function saveLead(phone: string, patch: LeadPatch): Promise<LeadPro
 
   return withSupabase(
     'saveLead',
-    async () => {
-      const { data, error } = await supabase
+    async (db) => {
+      const { data, error } = await db
         .from('leads')
         .upsert({ phone_number: canonical, ...fields }, { onConflict: 'phone_number' })
         .select(SELECT_COLUMNS)

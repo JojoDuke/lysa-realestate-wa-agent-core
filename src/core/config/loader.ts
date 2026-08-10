@@ -42,7 +42,9 @@ export function loadSystemPrompt(config: AppConfig): string {
     companyName: config.brand.companyName,
     tone: config.brand.tone,
     defaultLanguage: config.locale.defaultLanguage,
-    capabilitiesList: config.capabilities.map((capability) => `- ${capability}`).join('\n'),
+    capabilitiesList: config.capabilities
+      .map((capability) => `- ${capability.replace(/_/g, ' ')}`)
+      .join('\n'),
   });
 }
 

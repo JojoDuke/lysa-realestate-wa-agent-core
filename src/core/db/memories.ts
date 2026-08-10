@@ -1,4 +1,4 @@
-import { supabase, withSupabase, isSupabaseConfigured } from './supabase.js';
+import { withSupabase, isSupabaseConfigured } from './supabase.js';
 import { normalizePhone } from '../lib/phone.js';
 
 export type MemoryKind = 'preference' | 'requirement' | 'interaction' | 'appointment';
@@ -33,8 +33,8 @@ export async function saveMemory(
   const canonical = normalizePhone(phone);
   return withSupabase(
     'saveMemory',
-    async () => {
-      const { data, error } = await supabase
+    async (db) => {
+      const { data, error } = await db
         .from('customer_memories')
         .insert({ phone_number: canonical, kind, content })
         .select('id, phone_number, kind, content, created_at')
@@ -50,8 +50,8 @@ export async function listMemories(phone: string, limit = 20): Promise<CustomerM
   const canonical = normalizePhone(phone);
   return withSupabase(
     'listMemories',
-    async () => {
-      const { data, error } = await supabase
+    async (db) => {
+      const { data, error } = await db
         .from('customer_memories')
         .select('id, phone_number, kind, content, created_at')
         .eq('phone_number', canonical)

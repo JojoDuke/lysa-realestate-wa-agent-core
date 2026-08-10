@@ -15,12 +15,14 @@ Edit `config/app.json`:
 - enabled capabilities
 - initial knowledge: service areas, property types, office hours, fees, viewing process, valuation process, and maintenance procedure
 
-Edit `config/system.md`:
+Edit `config/system.md`, which is Lysa's persona and boundaries:
 
-- responsibilities
+- responsibilities and tone
 - enquiry-qualification flow for buyers, sellers, renters, landlords, tenants, and owners
 - rules and boundaries, including no legal, financial, investment, or fair-housing advice
 - escalation behavior for viewings, valuations, applications, availability, maintenance, and urgent hazards
+
+Delegation rules are generated from the enabled capabilities and appended automatically, so `system.md` should not mention tools or specialists.
 
 ## 3. Configure infrastructure
 
@@ -31,36 +33,33 @@ Copy `.env.example` to `.env` and provide:
 - Supabase URL and key
 - Supabase database URL for durable Mastra memory
 
-Run `supabase/migrations/001_initial.sql`.
+Run `supabase/migrations/001_initial.sql`, then `supabase/migrations/002_capabilities.sql`.
 
-## 4. Add required capabilities
+## 4. Choose capabilities
 
-Keep `core` enabled. Add or remove modules in `config/app.json`.
-
-Examples:
+Enable or remove Lysa's capabilities in `config/app.json`:
 
 ```json
-["core", "knowledge"]
+"capabilities": ["knowledge", "lead_qualification", "property_discovery", "viewing_booking", "memory"]
 ```
 
-```json
-["core", "knowledge", "booking"]
-```
+Removing an id removes that specialist, its tools, and its workflow. See [CAPABILITIES.md](./CAPABILITIES.md).
 
-Implement customer-specific external systems behind capability modules rather than in the WhatsApp handler. Common real-estate modules include:
+Then connect the customer's real systems:
 
-- property search backed by the customer's MLS, listings feed, or property-management system
-- viewing scheduling backed by the customer's calendar or booking provider
-- lead capture and CRM handoff
-- tenant maintenance or repair-request handoff
+- **Property discovery:** add listings to `properties.listings`, or replace the provider in `src/core/properties/provider.ts` with an MLS, portal-feed, or PMS adapter.
+- **Viewing booking:** set `scheduling.mode` and `availableWindows`, or back the scheduling tools with the customer's calendar or booking provider.
+- **Lead qualification:** forward qualified leads to the customer's CRM from the lead tools.
 
-Only enable a capability after it has been implemented and registered. The starter does not include live listing, availability, viewing, or CRM integrations.
+Implement external systems behind tools and providers, never in the WhatsApp handler. Without a provider, the tools report the capability as unavailable instead of inventing listings, availability, or confirmations.
 
 ## 5. Test
 
 - business, property, and process questions
 - qualification of buyer, seller, renter, landlord, tenant, and owner enquiries
+- property search, viewing requests, and recall of a returning customer
 - refusal to invent availability, prices, property details, or appointment confirmations
+- Lysa never naming an internal agent, tool, or workflow
 - human handoff and emergency-maintenance directions
 - `!clear`
 - message queue behavior

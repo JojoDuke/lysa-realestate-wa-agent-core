@@ -15,13 +15,7 @@
     "typingIndicator": true,
     "conversationReset": true
   },
-  "capabilities": [
-    "knowledge",
-    "lead_qualification",
-    "property_discovery",
-    "viewing_booking",
-    "memory"
-  ],
+  "capabilities": [],
   "model": "openrouter/openai/gpt-4.1-mini",
   "knowledge": {
     "entries": [

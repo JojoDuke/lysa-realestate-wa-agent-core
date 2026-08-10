@@ -1,4 +1,4 @@
-import { supabase, withSupabase, isSupabaseConfigured } from './supabase.js';
+import { withSupabase, isSupabaseConfigured } from './supabase.js';
 import { normalizePhone } from '../lib/phone.js';
 
 export type ViewingStatus = 'requested' | 'confirmed' | 'cancelled';
@@ -33,8 +33,8 @@ export async function createViewingRequest(input: {
 
   return withSupabase(
     'createViewingRequest',
-    async () => {
-      const { data, error } = await supabase
+    async (db) => {
+      const { data, error } = await db
         .from('viewing_requests')
         .insert({
           reference,
@@ -58,8 +58,8 @@ export async function listViewingRequests(phone: string): Promise<ViewingRequest
   const canonical = normalizePhone(phone);
   return withSupabase(
     'listViewingRequests',
-    async () => {
-      const { data, error } = await supabase
+    async (db) => {
+      const { data, error } = await db
         .from('viewing_requests')
         .select(SELECT_COLUMNS)
         .eq('phone_number', canonical)
@@ -79,8 +79,8 @@ export async function cancelViewingRequest(
   const canonical = normalizePhone(phone);
   return withSupabase(
     'cancelViewingRequest',
-    async () => {
-      const { data, error } = await supabase
+    async (db) => {
+      const { data, error } = await db
         .from('viewing_requests')
         .update({ status: 'cancelled' })
         .eq('phone_number', canonical)
