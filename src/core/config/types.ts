@@ -27,9 +27,6 @@ export interface AppConfig {
   };
   capabilities: CapabilityId[];
   model: string;
-  knowledge?: {
-    entries: Array<{ topic: string; content: string }>;
-  };
   properties?: {
     /** `config` reads the listings below. Other values require a provider adapter. */
     source?: 'config' | 'provider';

@@ -48,7 +48,8 @@ Fill in `.env` (including `OPENROUTER_API_KEY`), run the migrations in `supabase
 
 Normal customer customization happens in:
 
-- `config/app.json` — business identity, locale, model, enabled capabilities, knowledge, listings, and scheduling policy
+- `config/app.json` — business identity, locale, model, enabled capabilities, listings, and scheduling policy
+- `config/knowledge.md` — approved business knowledge the knowledge agent searches
 - `config/system.md` — Lysa's role, tone, qualification flow, rules, and escalation behavior
 - `src/mastra/tools/` — the concrete actions each capability can take
 - `src/core/properties/provider.ts` — swap the config catalogue for an MLS, portal feed, or PMS
@@ -83,7 +84,7 @@ The starter separates:
 1. Conversation memory — Mastra thread history keyed by the WhatsApp number
 2. Long-term customer memory — Supabase `customer_memories`, managed by the Memory capability
 3. Customer and lead data — Supabase `users`, `leads`, and `viewing_requests`
-4. Business knowledge — configuration now; Supabase/vector search can replace it later
+4. Business knowledge — `config/knowledge.md` now; Supabase/vector search can replace it later
 
 Set `SUPABASE_DATABASE_URL` in production. Without it, Mastra uses local `mastra.db`, which is not durable across redeploys.
 

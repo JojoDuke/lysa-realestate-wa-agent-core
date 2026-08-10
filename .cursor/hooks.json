@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "command": "node .cursor/hooks/journal.mjs"
+      }
+    ],
+    "workspaceOpen": [
+      {
+        "command": "node .cursor/hooks/journal.mjs"
+      }
+    ],
+    "afterFileEdit": [
+      {
+        "command": "node .cursor/hooks/journal.mjs"
+      }
+    ],
+    "afterShellExecution": [
+      {
+        "command": "node .cursor/hooks/journal.mjs",
+        "matcher": "git\\s+(commit|push)"
+      }
+    ]
+  }
+}

@@ -17,7 +17,7 @@ The profile is loaded before anything is asked, so the customer is never asked t
 Answers questions about the business using only its approved knowledge base.
 
 - Tools: `searchKnowledge`, `getBusinessInfo`
-- Source: `knowledge.entries` in `config/app.json`
+- Source: `config/knowledge.md` (`##` sections)
 
 If nothing matches, it says so and recommends a human handoff instead of guessing.
 

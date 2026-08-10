@@ -15,24 +15,8 @@
     "typingIndicator": true,
     "conversationReset": true
   },
-  "capabilities": [],
+  "capabilities": ["knowledge"],
   "model": "openrouter/openai/gpt-4.1-mini",
-  "knowledge": {
-    "entries": [
-      {
-        "topic": "office hours",
-        "content": "Replace this with your office hours, including after-hours and emergency-maintenance contact instructions if applicable."
-      },
-      {
-        "topic": "property enquiries",
-        "content": "Replace this with the areas you serve, property types you handle, and the information a prospect should provide when asking about a listing."
-      },
-      {
-        "topic": "viewings and valuations",
-        "content": "Replace this with your viewing, valuation, leasing, application, and tenant-maintenance processes. Do not state availability or confirm an appointment unless a live integration provides it."
-      }
-    ]
-  },
   "properties": {
     "source": "config",
     "listings": []

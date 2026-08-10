@@ -13,7 +13,7 @@ Edit `config/app.json`:
 - languages, timezone, and currency
 - model
 - enabled capabilities
-- initial knowledge: service areas, property types, office hours, fees, viewing process, valuation process, and maintenance procedure
+- initial knowledge in `config/knowledge.md`: service areas, property types, office hours, fees, viewing process, valuation process, and maintenance procedure
 
 Edit `config/system.md`, which is Lysa's persona and boundaries:
 

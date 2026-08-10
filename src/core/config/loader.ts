@@ -48,6 +48,34 @@ export function loadSystemPrompt(config: AppConfig): string {
   });
 }
 
+export interface KnowledgeSection {
+  topic: string;
+  content: string;
+}
+
+/** Reads `config/knowledge.md` and splits it into `##` sections for search. */
+export function loadKnowledgeBase(): KnowledgeSection[] {
+  const knowledgePath = path.join(projectRoot, 'config', 'knowledge.md');
+  if (!fs.existsSync(knowledgePath)) {
+    return [];
+  }
+
+  const markdown = fs.readFileSync(knowledgePath, 'utf-8');
+  const sections: KnowledgeSection[] = [];
+  const parts = markdown.split(/^##\s+/m);
+
+  for (const part of parts.slice(1)) {
+    const newline = part.indexOf('\n');
+    const topic = (newline === -1 ? part : part.slice(0, newline)).trim();
+    const content = (newline === -1 ? '' : part.slice(newline + 1)).trim();
+    if (topic) {
+      sections.push({ topic, content });
+    }
+  }
+
+  return sections;
+}
+
 export function buildAppContext(): AppContext {
   const config = loadAppConfig();
   return { config, systemPrompt: loadSystemPrompt(config) };

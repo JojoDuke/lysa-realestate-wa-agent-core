@@ -1,10 +1,9 @@
 import { createTool } from '@mastra/core/tools';
 import { z } from 'zod';
 import type { AppConfig } from '../../../core/config/types.js';
+import { loadKnowledgeBase } from '../../../core/config/loader.js';
 
 export function buildKnowledgeTools(config: AppConfig) {
-  const entries = config.knowledge?.entries ?? [];
-
   return {
     searchKnowledge: createTool({
       id: 'search-knowledge',
@@ -16,6 +15,7 @@ export function buildKnowledgeTools(config: AppConfig) {
           .describe('What to look up, e.g. "office hours", "viewing process", or "service area"'),
       }),
       execute: async (inputData) => {
+        const entries = loadKnowledgeBase();
         const q = inputData.query.toLowerCase();
         const matches = entries.filter(
           (entry) =>
@@ -23,7 +23,12 @@ export function buildKnowledgeTools(config: AppConfig) {
             entry.content.toLowerCase().includes(q) ||
             q
               .split(/\s+/)
-              .some((word) => word.length > 3 && entry.content.toLowerCase().includes(word)),
+              .some(
+                (word) =>
+                  word.length > 3 &&
+                  (entry.topic.toLowerCase().includes(word) ||
+                    entry.content.toLowerCase().includes(word)),
+              ),
         );
 
         if (matches.length === 0) {
